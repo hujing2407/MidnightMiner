@@ -1,0 +1,4 @@
+pycardano
+wasmtime
+requests
+cbor2
