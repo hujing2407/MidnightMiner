@@ -61,6 +61,28 @@ def unlock_file(file_handle):
         fcntl.flock(file_handle.fileno(), fcntl.LOCK_UN)
 
 
+def append_solution_to_csv(address, challenge_id, nonce):
+    """Append solution to solutions.csv with proper file locking"""
+    try:
+        # Create file if it doesn't exist
+        if not os.path.exists("solutions.csv"):
+            with open("solutions.csv", 'w') as f:
+                pass
+
+        # Append with locking
+        with open("solutions.csv", 'a') as f:
+            lock_file(f)
+            try:
+                f.write(f"{address},{challenge_id},{nonce}\n")
+                f.flush()
+                os.fsync(f.fileno())
+            finally:
+                unlock_file(f)
+        return True
+    except Exception as e:
+        return False
+
+
 def setup_logging():
     """Setup file and console logging"""
     log_format = '%(asctime)s - %(levelname)s - [%(processName)s] - %(message)s'
@@ -429,22 +451,16 @@ class MinerWorker:
             # Check if this is NOT the "Solution already exists" error
             if not ("Solution already exists" in error_detail):
                 # Append solution to solutions.csv
-                try:
-                    with open("solutions.csv", "a") as f:
-                        f.write(f"{address},{challenge['challenge_id']},{nonce}\n")
-                except Exception as log_err:
-                    self.logger.error(f"Worker {self.worker_id} ({self.short_addr}): Failed to write solution to file: {log_err}")
+                if not append_solution_to_csv(address, challenge['challenge_id'], nonce):
+                    self.logger.error(f"Worker {self.worker_id} ({self.short_addr}): Failed to write solution to file")
 
             return (False, True)
         except Exception as e:
             self.logger.warning(f"Worker {self.worker_id} ({self.short_addr}): Solution submission error for challenge {challenge['challenge_id']} - {e}")
 
             # Append solution to solutions.csv for non-HTTP errors
-            try:
-                with open("solutions.csv", "a") as f:
-                    f.write(f"{address},{challenge['challenge_id']},{nonce}\n")
-            except Exception as log_err:
-                self.logger.error(f"Worker {self.worker_id} ({self.short_addr}): Failed to write solution to file: {log_err}")
+            if not append_solution_to_csv(address, challenge['challenge_id'], nonce):
+                self.logger.error(f"Worker {self.worker_id} ({self.short_addr}): Failed to write solution to file")
 
             return (False, False)
 
@@ -602,12 +618,9 @@ class MinerWorker:
                         if self.submission_retry_count >= 3:
                             # Max retries reached, save to CSV and move on
                             self.logger.warning(f"Worker {self.worker_id} ({self.short_addr}): Max retries reached for challenge {challenge_id}, saving to solutions.csv")
-                            try:
-                                with open("solutions.csv", "a") as f:
-                                    submission_address = mining_address if mining_address else self.address
-                                    f.write(f"{submission_address},{challenge_id},{nonce}\n")
-                            except Exception as save_err:
-                                self.logger.error(f"Worker {self.worker_id} ({self.short_addr}): Failed to save solution to CSV: {save_err}")
+                            submission_address = mining_address if mining_address else self.address
+                            if not append_solution_to_csv(submission_address, challenge_id, nonce):
+                                self.logger.error(f"Worker {self.worker_id} ({self.short_addr}): Failed to save solution to CSV")
 
                             self.challenge_tracker.mark_solved(challenge_id, self.address)
                             self.update_status(current_challenge='Saved to CSV, moving on')
