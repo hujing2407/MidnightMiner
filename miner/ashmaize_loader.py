@@ -32,6 +32,7 @@ def get_platform_path():
     # Map platform combinations to directory names
     platform_map = {
         ('windows', 'x64'): 'windows-x64',
+        ('windows', 'arm64'): 'windows-x64',
         ('linux', 'x64'): 'linux-x64',
         ('linux', 'arm64'): 'linux-arm64',
         ('darwin', 'x64'): 'macos-x64',
@@ -50,7 +51,9 @@ def get_platform_path():
         )
 
     platform_dir = platform_map[platform_key]
-    lib_path = os.path.join(os.path.dirname(__file__), 'libs', platform_dir)
+    # When in miner/ subdirectory, go up one level to find libs/
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+    lib_path = os.path.join(base_dir, 'libs', platform_dir)
 
     # Check if the binary exists
     if system == 'windows':

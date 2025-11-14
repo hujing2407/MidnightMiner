@@ -13,7 +13,7 @@ from .file_utils import append_solution_to_csv
 
 # Import native Rust library
 try:
-    import ashmaize_loader
+    from . import ashmaize_loader
     ashmaize_py = ashmaize_loader.init()
 except RuntimeError as e:
     logging.error(f"Failed to load ashmaize_py: {e}")
