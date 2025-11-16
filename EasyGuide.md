@@ -101,16 +101,21 @@ You should run this once a day, as solutions can no longer be submitted after 24
 
 ## Claiming NIGHT
 
-To make claiming easier, you need to send all earnings to a single address using `consolidate.py`. This allows the your NIGHT tokens to be claimed from a single wallet instead of having them spread across many wallets. You only need to run this once, and all future earnings will be sent to the address. However the miner generates new wallets while mining, so it is best to run this script again at the end of the scavenger hunt to make sure all wallets are consolidated.
+To make claiming easier, you can consolidate all earnings to a single address using `consolidate.py`. This registers where your NIGHT tokens will be sent when the Midnight Network distributes them.
 
-**Important:** The destination address must be registered at https://sm.midnight.gd first! It is recommended to not use a wallet from wallets.json as your destination address for security reasons. It's safer to use an address from a wallet extension such as Eternl or Lace, after registering it with the online portal.
+Consolidation is like setting up mail forwarding - it tells the system where to send your NIGHT, but doesn't immediately move anything. Your miner wallet balances stay the same, and your destination wallet won't show any NIGHT until the network actually distributes tokens.
+
+The destination address must be registered at https://sm.midnight.gd first! It is recommended to not use a wallet from wallets.json as your destination address for security reasons. It's safer to use an address from a wallet extension such as Eternl or Lace, after registering it with the online portal.
+
+Since the miner generates new wallets while mining, it is best to run this script again at the end of the scavenger hunt to make sure all wallets are consolidated.
 
 **To consolidate:**
 ```
 py consolidate.py
 ```
 
-Paste a destination address when propmpted (the one that you will claim all consolidated NIGHT from). Type `CONFIRM` when prompted to proceed.
+Paste a destination address when prompted (the one that you will claim all consolidated NIGHT from). Type `CONFIRM` when prompted to proceed.
+
 
 **To undo consolidation:**
 ```

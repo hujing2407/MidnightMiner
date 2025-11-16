@@ -176,7 +176,9 @@ python check_earnings.py --address addr1vxask5vpp8p4xddsc3qd63luy4ecf...
 
 ## Consolidating NIGHT Earnings
 
-You can consolidate all NIGHT earnings to a single wallet using `consolidate.py`. This allows you to save on transaction fees by receiving all NIGHT tokens to a single address (when they are distributed).
+You can consolidate all NIGHT earnings to a single wallet using `consolidate.py`. This registers a destination address where your NIGHT tokens will be sent during future distributions.
+
+Consolidation is like setting up mail forwarding - it tells the network where to send your NIGHT, but doesn't immediately move anything. Your miner wallet balances will remain unchanged, and your destination wallet balance won't increase until the Midnight Network actually distributes tokens.
 
 The destination address **must be registered** at https://sm.midnight.gd before consolidation. It is recommended to not use a wallet from wallets.json as your destination address for security reasons. It's safer to use an address from a wallet extension such as Eternl or Lace, after registering it with the online portal.
 
@@ -186,7 +188,7 @@ The destination address **must be registered** at https://sm.midnight.gd before 
 python consolidate.py
 ```
 
-The script will prompt for confirmation before proceeding. Successfully consolidated wallets will send all their earnings (past and future) to the destination address.
+The script will prompt for confirmation before proceeding. Successfully consolidated wallets will redirect all their earnings (past and future) to the destination address when distributions occur.
 
 **To undo consolidation:**
 ```bash
